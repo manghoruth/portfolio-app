@@ -24,4 +24,18 @@ jobs:
       docker push ${{ secrets.DOCKER_USERNAME }}/ciportfolio .
    
  
-        images: ${{ secrets.DOCKER_USERNAME }}/ciportfolio:${{ github.run_number }}
+        images: ${{ deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: ssh to Linux and run container
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY_PAIR }}
+        script: |
+            docker rm -f portfolio || echo "Container not found, skipping removal."
+            docker run -d --name portfolio. -p 8080:80 ${{ secrets.DOCKER_USERNAME }}/ciportfolio:${{ github.run_number }} .
+            docker run -d --name portfolio. -p 8080:80 ${{ secrets.DOCKER_USERNAME }}/ciportfolio .
+    
